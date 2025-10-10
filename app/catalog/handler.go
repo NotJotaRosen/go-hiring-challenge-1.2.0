@@ -1,9 +1,9 @@
 package catalog
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/mytheresa/go-hiring-challenge/app/api"
 	"github.com/mytheresa/go-hiring-challenge/models"
 )
 
@@ -27,13 +27,16 @@ func NewCatalogHandler(r *models.ProductsRepository) *CatalogHandler {
 }
 
 func (h *CatalogHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
+
+	// Map response
+
+	// Return the products as a JSON response
 	res, err := h.repo.GetAllProducts()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		api.ErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	// Map response
 	products := make([]Product, len(res))
 	for i, p := range res {
 		products[i] = Product{
@@ -42,15 +45,5 @@ func (h *CatalogHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Return the products as a JSON response
-	w.Header().Set("Content-Type", "application/json")
-
-	response := Response{
-		Products: products,
-	}
-
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	api.OKResponse(w, Response{Products: products})
 }
