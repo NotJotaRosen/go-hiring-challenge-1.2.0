@@ -6,6 +6,7 @@ import (
 
 	"github.com/mytheresa/go-hiring-challenge/app/api"
 	"github.com/mytheresa/go-hiring-challenge/models"
+	"gorm.io/gorm"
 )
 
 type response struct {
@@ -60,4 +61,20 @@ func (h *CatalogHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	api.OKResponse(w, response{Products: products, Total: total})
+}
+
+func (h *CatalogHandler) HandleGetProductByCode(w http.ResponseWriter, r *http.Request) {
+	code := r.PathValue("code")
+
+	product, err := h.repo.GetProductByCode(code)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			api.ErrorResponse(w, http.StatusNotFound, "product not found")
+			return
+		}
+		api.ErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	api.OKResponse(w, product)
 }
