@@ -8,6 +8,8 @@ type ProductsRepository struct {
 	db *gorm.DB
 }
 
+var _ ProductRepositoryInterface = &ProductsRepository{}
+
 func NewProductsRepository(db *gorm.DB) *ProductsRepository {
 	return &ProductsRepository{
 		db: db,

@@ -10,21 +10,17 @@ import (
 )
 
 type response struct {
-	Products []product `json:"products"`
-	Total    int64     `json:"total"`
+	Products []models.Product `json:"products"`
+	Total    int64            `json:"total"`
 }
 
-type product struct {
-	Code     string  `json:"code"`
-	Price    float64 `json:"price"`
-	Category string  `json:"category"`
-}
+
 
 type CatalogHandler struct {
-	repo *models.ProductsRepository
+	repo models.ProductRepositoryInterface
 }
 
-func NewCatalogHandler(r *models.ProductsRepository) *CatalogHandler {
+func NewCatalogHandler(r models.ProductRepositoryInterface) *CatalogHandler {
 	return &CatalogHandler{
 		repo: r,
 	}
@@ -51,16 +47,7 @@ func (h *CatalogHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	products := make([]product, len(res))
-	for i, p := range res {
-		products[i] = product{
-			Code:     p.Code,
-			Price:    p.Price.InexactFloat64(),
-			Category: p.Category.Name,
-		}
-	}
-
-	api.OKResponse(w, response{Products: products, Total: total})
+	api.OKResponse(w, response{Products: res, Total: total})
 }
 
 func (h *CatalogHandler) HandleGetProductByCode(w http.ResponseWriter, r *http.Request) {
