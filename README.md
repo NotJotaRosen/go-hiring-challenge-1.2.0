@@ -1,3 +1,5 @@
+Hi from another account
+
 # Go Hiring Challenge
 
 This repository contains a Go application for managing products and their prices, including functionalities for CRUD operations and seeding the database with initial data.
